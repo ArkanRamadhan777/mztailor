@@ -7,9 +7,6 @@ import { LoadingState } from "./components/ui";
 const LandingPage = lazy(() =>
   import("./pages/LandingPage").then((m) => ({ default: m.LandingPage })),
 );
-const OrderPage = lazy(() =>
-  import("./pages/OrderPage").then((m) => ({ default: m.OrderPage })),
-);
 const LoginPage = lazy(() =>
   import("./pages/admin/LoginPage").then((m) => ({ default: m.LoginPage })),
 );
@@ -54,7 +51,7 @@ export default function App() {
     <Suspense fallback={<LoadingState label="Menyiapkan halaman..." />}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/pesan" element={<OrderPage />} />
+        <Route path="/pesan" element={<Navigate to="/" replace />} />
         <Route path="/mz-admin/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/mz-admin" element={<AdminLayout />}>

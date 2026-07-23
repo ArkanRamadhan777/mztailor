@@ -81,7 +81,7 @@ export function AdminLayout() {
             </button>
           </div>
           <button
-            className="rounded-lg p-2 text-sage-800 lg:hidden"
+            className="ml-auto rounded-lg p-2 text-sage-800 lg:hidden"
             onClick={() => setOpen(!open)}
             aria-label="Menu admin"
           >

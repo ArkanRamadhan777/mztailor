@@ -118,6 +118,7 @@ create or replace function public.create_public_order(
 ) returns text language plpgsql security definer set search_path = '' as $$
 declare v_customer uuid; v_order uuid; v_number text; v_seq integer; v_month text; v_item jsonb;
 begin
+ if not public.is_admin() then raise exception 'Akses ditolak'; end if;
  if length(trim(p_name))<2 or length(regexp_replace(p_whatsapp,'\D','','g'))<9 or jsonb_array_length(p_items)<1 then raise exception 'Data pemesanan tidak lengkap'; end if;
  v_month=to_char(now(),'YYYYMM'); perform pg_advisory_xact_lock(hashtext('mzt-'||v_month));
  select coalesce(max(right(order_number,4)::integer),0)+1 into v_seq from public.orders where order_number like 'MZT-'||v_month||'-%';
@@ -135,7 +136,7 @@ begin
  return v_number;
 end; $$;
 revoke all on function public.create_public_order(text,text,text,jsonb,text,jsonb) from public;
-grant execute on function public.create_public_order(text,text,text,jsonb,text,jsonb) to anon,authenticated;
+grant execute on function public.create_public_order(text,text,text,jsonb,text,jsonb) to authenticated;
 
 create or replace function public.redeem_customer_reward(p_customer_id uuid,p_reward_id uuid) returns uuid language plpgsql security definer set search_path = '' as $$
 declare v_id uuid; v_stock integer;
@@ -175,7 +176,7 @@ insert into storage.buckets(id,name,public,file_size_limit,allowed_mime_types) v
  ('order-references','order-references',false,5242880,array['image/jpeg','image/png','image/webp']),
  ('portfolio','portfolio',true,5242880,array['image/jpeg','image/png','image/webp'])
 on conflict(id) do nothing;
-create policy "public uploads order references" on storage.objects for insert to anon,authenticated with check(bucket_id='order-references' and (storage.foldername(name))[1]='public');
+create policy "admin uploads order references" on storage.objects for insert to authenticated with check(bucket_id='order-references' and public.is_admin());
 create policy "admin reads order references" on storage.objects for select to authenticated using(bucket_id='order-references' and public.is_admin());
 create policy "admin manages order references" on storage.objects for all to authenticated using(bucket_id='order-references' and public.is_admin()) with check(bucket_id='order-references' and public.is_admin());
 create policy "public reads portfolio" on storage.objects for select to anon,authenticated using(bucket_id='portfolio');

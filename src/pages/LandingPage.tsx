@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
-  ArrowRight,
   BadgeCheck,
   Check,
   ChevronDown,
@@ -92,16 +90,13 @@ export function LandingPage() {
                 {settings.description}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/pesan" className="btn-primary px-6 py-4">
-                  Buat Pesanan <ArrowRight size={18} />
-                </Link>
                 <a
                   href={wa}
                   target="_blank"
                   rel="noreferrer"
-                  className="btn-secondary px-6 py-4"
+                  className="btn-primary px-6 py-4"
                 >
-                  <WhatsAppIcon size={18} /> Konsultasi Gratis
+                  <WhatsAppIcon size={18} /> Hubungi MZ TAILOR
                 </a>
               </div>
               <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-slate-600">
@@ -246,9 +241,14 @@ export function LandingPage() {
                   Hasil jahitan pilihan
                 </h2>
               </div>
-              <Link to="/pesan" className="font-bold text-sage-700">
-                Punya model sendiri? Pesan di sini →
-              </Link>
+              <a
+                href={wa}
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold text-sage-700"
+              >
+                Punya model sendiri? Konsultasikan di WhatsApp →
+              </a>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {portfolios.map((p) => (
@@ -324,22 +324,22 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section id="cara-pesan" className="section-pad">
+        <section id="cara-kerja" className="section-pad">
           <div className="container-page">
             <div className="mx-auto mb-12 max-w-2xl text-center">
               <p className="mb-3 font-bold uppercase tracking-widest text-sage-600">
-                Cara pemesanan
+                Cara kerja
               </p>
               <h2 className="text-3xl font-extrabold sm:text-4xl">
-                Empat langkah, lalu kami mulai menjahit
+                Empat langkah sebelum kami mulai menjahit
               </h2>
             </div>
             <div className="grid gap-4 md:grid-cols-4">
               {[
                 [
                   "01",
-                  "Isi formulir",
-                  "Lengkapi kontak, ukuran, dan item pesanan.",
+                  "Konsultasi model",
+                  "Kirim referensi dan kebutuhanmu melalui WhatsApp.",
                 ],
                 [
                   "02",
@@ -359,9 +359,14 @@ export function LandingPage() {
               ))}
             </div>
             <div className="mt-8 text-center">
-              <Link to="/pesan" className="btn-primary">
-                Mulai Pesanan <ArrowRight size={18} />
-              </Link>
+              <a
+                href={wa}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary"
+              >
+                <WhatsAppIcon size={18} /> Konsultasi via WhatsApp
+              </a>
             </div>
           </div>
         </section>

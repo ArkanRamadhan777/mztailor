@@ -108,11 +108,11 @@ export function OrdersPage() {
       <div className="admin-filter card mb-5 bg-white p-3">
         <div className="admin-filter-search">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
             size={18}
           />
           <input
-            className="input h-12 pl-11 pr-4"
+            className="input h-12 pl-4 pr-11"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Cari nomor, nama, atau WhatsApp..."
