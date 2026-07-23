@@ -1,24 +1,20 @@
-import { CheckCircle2, Gift, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Gift, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { PageHeader } from '../../components/admin/PageHeader'
 import { ConfirmModal, EmptyState, ErrorState, LoadingState, Modal } from '../../components/ui'
 import { useSupabaseList } from '../../hooks/useSupabaseList'
 import { supabase } from '../../lib/supabase'
-import type { Customer, Reward } from '../../types'
+import type { Reward } from '../../types'
 
 export function RewardsPage() {
   const { data, loading, error, reload } = useSupabaseList<Reward>('rewards', '*')
-  const customers = useSupabaseList<Customer>('customers', '*')
   const [edit, setEdit] = useState<Partial<Reward> | null>(null)
-  const [redeem, setRedeem] = useState<{ customer: string; reward: string } | null>(null)
   const [remove, setRemove] = useState<Reward | null>(null)
-  const redemption = async () => { if (!redeem?.customer || !redeem.reward) return toast.error('Pilih pelanggan dan reward'); const { error: e } = await supabase.rpc('redeem_customer_reward', { p_customer_id: redeem.customer, p_reward_id: redeem.reward }); if (e) toast.error(e.message); else { toast.success('Reward berhasil digunakan'); setRedeem(null); await customers.reload() } }
   const del = async () => { if (remove) await supabase.from('rewards').delete().eq('id', remove.id); setRemove(null); await reload() }
-  return <><PageHeader title="Reward diskon" description="Kelola diskon loyalitas yang dapat dipakai saat membuat pesanan." action={<div className="flex flex-wrap gap-2"><button className="btn-secondary" onClick={() => setRedeem({ customer: '', reward: '' })}><CheckCircle2 size={18} /> Gunakan reward</button><button className="btn-primary" onClick={() => setEdit({ name: '', description: '', stock: null, is_active: true, reward_type: 'discount_percent', discount_value: 10 })}><Plus size={18} /> Tambah diskon</button></div>} />
+  return <><PageHeader title="Reward diskon" description="Diskon loyalitas otomatis tersedia saat membuat pesanan baru." action={<button className="btn-primary" onClick={() => setEdit({ name: '', description: '', stock: null, is_active: true, reward_type: 'discount_percent', discount_value: 10 })}><Plus size={18} /> Tambah diskon</button>} />
     {loading ? <LoadingState /> : error ? <ErrorState message={error} retry={reload} /> : data.length === 0 ? <EmptyState title="Belum ada reward diskon" /> : <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{data.filter(x => x.reward_type !== 'item').map(x => <article key={x.id} className="card p-5"><span className="grid size-12 place-items-center rounded-2xl bg-amber-50 text-amber-600"><Gift /></span><div className="mt-5 flex items-start justify-between gap-3"><div><h2 className="font-bold">{x.name}</h2><p className="mt-2 text-xs font-bold text-amber-700">{x.reward_type === 'discount_amount' ? `Potongan Rp${(x.discount_value ?? 0).toLocaleString('id-ID')}` : `Diskon ${x.discount_value ?? 0}%`}</p><p className="mt-2 min-h-10 text-sm text-slate-500">{x.description}</p></div><span className={`rounded-full px-3 py-1 text-[10px] font-bold ${x.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{x.is_active ? 'Aktif' : 'Nonaktif'}</span></div><div className="mt-5 flex items-center justify-between border-t border-sage-100 pt-3"><p className="text-xs">Stok {x.stock ?? '∞'}</p><div><button className="p-2 text-sage-700" onClick={() => setEdit(x)}><Pencil size={17} /></button><button className="p-2 text-red-500" onClick={() => setRemove(x)}><Trash2 size={17} /></button></div></div></article>)}</div>}
     {edit && <RewardModal value={edit} onClose={() => setEdit(null)} onSaved={async () => { setEdit(null); await reload() }} />}
-    <Modal open={!!redeem} title="Gunakan reward diskon" onClose={() => setRedeem(null)}><div className="space-y-4"><label><span className="label">Pelanggan dengan reward</span><select className="input" value={redeem?.customer} onChange={e => setRedeem({ ...redeem!, customer: e.target.value })}><option value="">Pilih pelanggan</option>{customers.data.filter(x => x.available_rewards > 0).map(x => <option key={x.id} value={x.id}>{x.name} ({x.available_rewards} tersedia)</option>)}</select></label><label><span className="label">Reward diskon</span><select className="input" value={redeem?.reward} onChange={e => setRedeem({ ...redeem!, reward: e.target.value })}><option value="">Pilih diskon</option>{data.filter(x => x.reward_type !== 'item' && x.is_active && (x.stock === null || (x.stock ?? 0) > 0)).map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</select></label><p className="rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-800">Untuk memakai diskon pada pesanan baru, pilih diskon langsung di halaman tambah pesanan.</p><button className="btn-primary w-full" onClick={() => void redemption()}>Konfirmasi penggunaan</button></div></Modal>
     <ConfirmModal open={!!remove} title="Hapus reward?" description="Reward yang sudah memiliki riwayat penggunaan sebaiknya dinonaktifkan, bukan dihapus." danger confirmLabel="Hapus" onClose={() => setRemove(null)} onConfirm={() => void del()} />
   </>
 }

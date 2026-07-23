@@ -137,22 +137,6 @@ begin
 end; $$;
 revoke all on function public.create_public_order(text,text,text,jsonb,text,jsonb) from public;
 grant execute on function public.create_public_order(text,text,text,jsonb,text,jsonb) to authenticated;
-
-create or replace function public.redeem_customer_reward(p_customer_id uuid,p_reward_id uuid) returns uuid language plpgsql security definer set search_path = '' as $$
-declare v_id uuid; v_stock integer;
-begin
- if not public.is_admin() then raise exception 'Akses ditolak'; end if;
- perform 1 from public.customers where id=p_customer_id and active_stamps=5 and available_rewards>0 for update;
- if not found then raise exception 'Pelanggan belum memiliki reward aktif'; end if;
- select stock into v_stock from public.rewards where id=p_reward_id and is_active=true for update;
- if not found or (v_stock is not null and v_stock<1) then raise exception 'Reward tidak tersedia'; end if;
- insert into public.reward_redemptions(customer_id,reward_id,redeemed_by) values(p_customer_id,p_reward_id,auth.uid()) returning id into v_id;
- update public.customers set active_stamps=0,available_rewards=available_rewards-1 where id=p_customer_id;
- if v_stock is not null then update public.rewards set stock=stock-1 where id=p_reward_id; end if;
- return v_id;
-end; $$;
-revoke all on function public.redeem_customer_reward(uuid,uuid) from public; grant execute on function public.redeem_customer_reward(uuid,uuid) to authenticated;
-
 -- RLS: public sees only active marketing content and business profile. All private tables require an admin session.
 do $$ declare t text; begin foreach t in array array['profiles','customers','customer_measurements','orders','order_items','order_status_history','services','portfolios','stamp_history','rewards','reward_redemptions','whatsapp_message_logs','business_settings'] loop execute format('alter table public.%I enable row level security',t); end loop; end $$;
 create policy "admin profiles" on public.profiles for all to authenticated using(public.is_admin()) with check(public.is_admin());
