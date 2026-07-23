@@ -18,6 +18,8 @@ const DashboardPage = lazy(() =>
 const OrdersPage = lazy(() =>
   import("./pages/admin/OrdersPage").then((m) => ({ default: m.OrdersPage })),
 );
+const AddOrderPage = lazy(() => import("./pages/admin/AddOrderPage").then((m) => ({ default: m.AddOrderPage })));
+const OrderDetailPage = lazy(() => import("./pages/admin/OrderDetailPage").then((m) => ({ default: m.OrderDetailPage })));
 const CustomersPage = lazy(() =>
   import("./pages/admin/CustomersPage").then((m) => ({
     default: m.CustomersPage,
@@ -58,6 +60,8 @@ export default function App() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<DashboardPage />} />
             <Route path="pesanan" element={<OrdersPage />} />
+            <Route path="pesanan/tambah" element={<AddOrderPage />} />
+            <Route path="pesanan/:orderId" element={<OrderDetailPage />} />
             <Route path="pelanggan" element={<CustomersPage />} />
             <Route path="katalog" element={<CatalogPage />} />
             <Route path="layanan" element={<ServicesPage />} />

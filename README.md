@@ -103,6 +103,8 @@ Jika schema sudah pernah dijalankan dan muncul error `type "order_status" alread
 
 Jika database sudah ada tetapi belum menerima pengamanan terbaru, jalankan [supabase/repair-existing.sql](<E:/MZ TAILOR!/supabase/repair-existing.sql>) sekali. File ini memperbarui akses pembuatan pesanan, policy upload, dan aturan admin/staff tanpa membuat ulang tabel.
 
+Untuk langsung memasang perubahan pesanan terbaru sekaligus data demo, gunakan [supabase/demo-data-and-reward.sql](<E:/MZ TAILOR!/supabase/demo-data-and-reward.sql>). File ini menambahkan ukuran per item, kalkulasi subtotal/diskon, RPC order baru, dua reward diskon, dan pelanggan demo **Andi Wijaya** dengan 5 stempel serta 1 reward aktif.
+
 ## Computational thinking dan validasi hasil
 
 - **Decomposition:** landing/marketing, autentikasi admin, pelanggan & ukuran, pesanan multi-item, status, katalog, layanan, loyalitas, reward, dan WhatsApp dipisahkan menjadi modul.

@@ -7,6 +7,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { PageHeader } from "../../components/admin/PageHeader";
 import { WhatsAppIcon } from "../../components/WhatsAppIcon";
@@ -38,6 +39,7 @@ const statusColors: Record<OrderStatus, string> = {
   cancelled: "bg-red-50 text-red-700",
 };
 export function OrdersPage() {
+  const navigate = useNavigate();
   const { data, loading, error, reload } = useSupabaseList<Order>(
     "orders",
     "*,customers(name,whatsapp,address),order_items(*)",
@@ -100,7 +102,7 @@ export function OrdersPage() {
         title="Pesanan"
         description="Kelola item, harga, estimasi, dan progres pesanan."
         action={
-          <button className="btn-primary" onClick={() => setCreateOpen(true)}>
+          <button className="btn-primary" onClick={() => navigate("/mz-admin/pesanan/tambah")}>
             <Plus size={18} /> Tambah pesanan
           </button>
         }
@@ -190,11 +192,11 @@ export function OrdersPage() {
                     ))}
                   </select>
                   <button
-                    title="Detail & edit"
-                    className="rounded-xl border border-sage-100 p-2.5 text-sage-700 hover:bg-sage-50"
-                    onClick={() => setSelected(o)}
+                    title="Lihat detail pesanan"
+                    className="inline-flex items-center gap-2 rounded-xl border border-sage-100 px-3 py-2.5 text-xs font-bold text-sage-700 hover:bg-sage-50"
+                    onClick={() => navigate(`/mz-admin/pesanan/${o.id}`)}
                   >
-                    <Pencil size={18} />
+                    <Pencil size={16} /> Lihat detail
                   </button>
                   <button
                     title="Kirim WhatsApp"
@@ -649,46 +651,15 @@ function AddOrderModal({
             {items.map((item, index) => (
               <div
                 key={index}
-                className="grid grid-cols-2 gap-2 rounded-2xl border border-sage-100 p-3"
+                className="rounded-2xl border border-sage-100 bg-sage-50/40 p-4"
               >
-                <input
-                  className="input text-sm"
-                  placeholder="Jenis pakaian"
-                  value={item.clothing_type}
-                  onChange={(event) =>
-                    updateItem(index, { clothing_type: event.target.value })
-                  }
-                />
-                <input
-                  className="input text-sm"
-                  placeholder="Model pakaian"
-                  value={item.model}
-                  onChange={(event) =>
-                    updateItem(index, { model: event.target.value })
-                  }
-                />
-                <input
-                  className="input text-sm"
-                  type="number"
-                  min="1"
-                  placeholder="Jumlah"
-                  value={item.quantity}
-                  onChange={(event) =>
-                    updateItem(index, { quantity: Number(event.target.value) })
-                  }
-                />
-                <input
-                  className="input text-sm"
-                  type="number"
-                  min="0"
-                  placeholder="Harga satuan"
-                  value={item.unit_price}
-                  onChange={(event) =>
-                    updateItem(index, {
-                      unit_price: Number(event.target.value),
-                    })
-                  }
-                />
+                <div className="mb-3 flex items-center justify-between"><b className="text-xs font-bold text-sage-800">Item {index + 1}</b>{items.length > 1 && <button type="button" className="text-xs font-bold text-red-500" onClick={() => setItems(items.filter((_, itemIndex) => itemIndex !== index))}>Hapus item</button>}</div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Jenis pakaian</span><input className="input text-sm" placeholder="Contoh: Kemeja" value={item.clothing_type} onChange={(event) => updateItem(index, { clothing_type: event.target.value })} /></label>
+                  <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Model pakaian</span><input className="input text-sm" placeholder="Contoh: Slim fit" value={item.model} onChange={(event) => updateItem(index, { model: event.target.value })} /></label>
+                  <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Jumlah potong</span><input className="input text-sm" type="number" min="1" placeholder="1" value={item.quantity} onChange={(event) => updateItem(index, { quantity: Math.max(1, Number(event.target.value) || 1) })} /></label>
+                  <label><span className="mb-1.5 block text-[11px] font-bold text-slate-600">Harga satuan (Rp)</span><input className="input text-sm" type="number" min="0" placeholder="Masukkan harga" value={item.unit_price || ''} onChange={(event) => updateItem(index, { unit_price: Math.max(0, Number(event.target.value) || 0) })} /></label>
+                </div>
               </div>
             ))}
           </div>
