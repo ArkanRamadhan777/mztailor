@@ -52,7 +52,7 @@ export function AdminLayout() {
         <div className="mx-auto flex h-[4.5rem] max-w-[1520px] items-center gap-5 px-4 lg:px-8">
           <Brand />
           <span className="hidden h-6 w-px bg-sage-100 lg:block" />
-          <nav className="hide-scrollbar hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto lg:flex">
+          <nav className="hide-scrollbar hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:flex">
             {nav.map(([path, label, Icon]) => (
               <NavLink key={path} to={path} className={linkClass}>
                 <Icon size={16} />

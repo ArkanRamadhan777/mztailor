@@ -101,6 +101,8 @@ Jika database sudah pernah dibuat sebelum pengamanan pemesanan publik diterapkan
 
 Jika schema sudah pernah dijalankan dan muncul error `type "order_status" already exists`, jangan jalankan `setup.sql` lagi. Jalankan hanya [supabase/dummy-data.sql](<E:/MZ TAILOR!/supabase/dummy-data.sql>) untuk menambahkan data demo ke database yang sudah ada.
 
+Jika database sudah ada tetapi belum menerima pengamanan terbaru, jalankan [supabase/repair-existing.sql](<E:/MZ TAILOR!/supabase/repair-existing.sql>) sekali. File ini memperbarui akses pembuatan pesanan, policy upload, dan aturan admin/staff tanpa membuat ulang tabel.
+
 ## Computational thinking dan validasi hasil
 
 - **Decomposition:** landing/marketing, autentikasi admin, pelanggan & ukuran, pesanan multi-item, status, katalog, layanan, loyalitas, reward, dan WhatsApp dipisahkan menjadi modul.
