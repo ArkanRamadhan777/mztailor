@@ -24,7 +24,7 @@ import type { Customer } from "../../types";
 export function CustomersPage() {
   const { data, loading, error, reload } = useSupabaseList<Customer>(
     "customers",
-    "*,customer_measurements(*)",
+    "*,customer_measurements(*),orders(id,order_number,status,created_at,total_price)",
   );
   const [q, setQ] = useState("");
   const [edit, setEdit] = useState<Customer | null>(null);
@@ -94,6 +94,7 @@ export function CustomersPage() {
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {shown.map((c) => (
             <article key={c.id} className="card p-5">
+              {(() => { const lastOrder = [...(c.orders ?? [])].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]; return <div className="mb-4 rounded-2xl border border-sage-100 bg-sage-50/60 p-3"><p className="text-[10px] font-bold uppercase tracking-widest text-sage-600">Order terakhir</p>{lastOrder ? <div className="mt-1 flex items-center justify-between gap-3"><div><b className="text-sm">{lastOrder.order_number}</b><p className="mt-1 text-xs text-slate-500">{dateID(lastOrder.created_at)}</p></div><span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-sage-700">{lastOrder.status === 'completed' ? 'Selesai' : lastOrder.status === 'cancelled' ? 'Dibatalkan' : 'Berjalan'}</span></div> : <p className="mt-1 text-xs text-slate-500">Belum pernah melakukan order</p>}</div> })()}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <span className="grid size-11 place-items-center rounded-full bg-sage-100 font-extrabold text-sage-700">
